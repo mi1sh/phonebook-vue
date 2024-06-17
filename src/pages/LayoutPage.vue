@@ -26,13 +26,13 @@ import { useRecordsStore } from '@/stores/records';
 import { ref, watch, onMounted, toRefs } from 'vue';
 
 const headers = [
-  { text: 'Фамилия', value: 'f', sortable: true },
-  { text: 'Имя', value: 'i', sortable: true },
-  { text: 'Отчество', value: 'o', sortable: true },
-  { text: 'Город', value: 'city', sortable: true },
-  { text: 'Адрес', value: 'address', sortable: true },
-  { text: 'Дата рождения', value: 'birthday', sortable: true },
-  { text: 'Телефон', value: 'phone', sortable: true },
+  { title: 'Фамилия', value: 'f', sortable: true },
+  { title: 'Имя', value: 'i', sortable: true },
+  { title: 'Отчество', value: 'o', sortable: true },
+  { title: 'Город', value: 'city', sortable: true },
+  { title: 'Адрес', value: 'address', sortable: true },
+  { title: 'Дата рождения', value: 'birthday', sortable: true },
+  { title: 'Телефон', value: 'phone', sortable: true },
 ];
 
 const store = useRecordsStore();

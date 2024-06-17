@@ -35,13 +35,20 @@ const submit = handleSubmit(handleLogin);
     <form @submit.prevent="submit" class="mx-auto">
       <PhonebookIcon class="mb-7"/>
       <v-text-field
+          variant="outlined"
           class="mb-3"
+          base-color="blue-grey-lighten-3"
+          color="blue-grey-lighten-4"
+          placeholder="mail@example.com"
           v-model="email.value.value"
           :error-messages="email.errorMessage"
           label="E-mail"
       ></v-text-field>
       <v-text-field
+          variant="outlined"
           class="mb-3"
+          color="blue-grey-lighten-4"
+          placeholder="qwe123"
           v-model="password.value.value"
           :error-messages="password.errorMessage"
           label="Password"

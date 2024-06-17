@@ -12,6 +12,12 @@
   font-weight: normal;
 }
 
+input {
+    filter: none;
+    box-shadow: 0 0 0 40px #455A64 inset !important;
+    border-radius: 5px !important;
+}
+
 .v-data-table-header__content {
     font-size: 1.15em;
     color: aliceblue;
