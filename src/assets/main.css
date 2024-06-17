@@ -1,0 +1,48 @@
+#app {
+  margin: 0 auto;
+  font-weight: normal;
+    height: 100vh;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+html {
+    background-color: #212121;
+}
+
+.v-data-table-header__content {
+    font-size: 1.15em;
+    color: aliceblue;
+    font-weight: bold;
+}
+
+.v-data-table__td {
+    text-align: left;
+    color: #c7ced7;
+}
+
+.v-container {
+    max-width: 70%;
+}
+
+body {
+    background-color: #212121;
+  min-height: 100vh;
+    color: #bdc1c6;
+  line-height: 1.6;
+  font-family:
+      Inter,
+      Roboto,
+      Oxygen,
+      sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
