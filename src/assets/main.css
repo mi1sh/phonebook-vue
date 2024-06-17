@@ -12,10 +12,6 @@
   font-weight: normal;
 }
 
-html {
-    background-color: #212121;
-}
-
 .v-data-table-header__content {
     font-size: 1.15em;
     color: aliceblue;
@@ -32,7 +28,7 @@ html {
 }
 
 body {
-    background-color: #212121;
+    background-color: #1f292d;
   min-height: 100vh;
     color: #bdc1c6;
   line-height: 1.6;

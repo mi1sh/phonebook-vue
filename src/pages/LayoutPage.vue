@@ -26,34 +26,45 @@ import { useRecordsStore } from '@/stores/records';
 import { ref, watch, onMounted, toRefs } from 'vue';
 
 const headers = [
-  { title: 'Фамилия', value: 'f', sortable: true },
-  { title: 'Имя', value: 'i', sortable: true },
-  { title: 'Отчество', value: 'o', sortable: true },
-  { title: 'Город', value: 'city', sortable: true },
-  { title: 'Адрес', value: 'address', sortable: true },
-  { title: 'Дата рождения', value: 'birthday', sortable: true },
-  { title: 'Телефон', value: 'phone', sortable: true },
+  { text: 'Фамилия', value: 'f', sortable: true },
+  { text: 'Имя', value: 'i', sortable: true },
+  { text: 'Отчество', value: 'o', sortable: true },
+  { text: 'Город', value: 'city', sortable: true },
+  { text: 'Адрес', value: 'address', sortable: true },
+  { text: 'Дата рождения', value: 'birthday', sortable: true },
+  { text: 'Телефон', value: 'phone', sortable: true },
 ];
 
 const store = useRecordsStore();
 const { records, itemsPerPage, fetchAllRecords, totalPages, loading, totalRecords } = toRefs(store);
 const currentPage = ref(1);
+const sortBy = ref<string | null>(null);
+const sortDesc = ref<boolean>(false);
 
 function updateOptions(options) {
   console.log('update:options', options);
   currentPage.value = options.page;
+  if (options.sortBy.length) {
+    sortBy.value = options.sortBy[0].key;
+    sortDesc.value = options.sortBy[0].order === 'desc';
+  } else {
+    sortBy.value = null;
+    sortDesc.value = false;
+  }
   console.log('Current page:', currentPage.value);
+  console.log('Sort by:', sortBy.value);
+  console.log('Sort desc:', sortDesc.value);
 }
 
-watch(currentPage, (newPage) => {
-  console.log('Current page changed to:', newPage);
-  fetchAllRecords.value({ page: newPage }).then(() => {
+watch([currentPage, sortBy, sortDesc], ([newPage, newSortBy, newSortDesc]) => {
+  console.log('Parameters changed - Page:', newPage, 'Sort by:', newSortBy, 'Sort desc:', newSortDesc);
+  fetchAllRecords.value({ page: newPage, sortBy: newSortBy, sortDesc: newSortDesc }).then(() => {
     console.log('Records updated:', records.value);
   });
 });
 
 onMounted(() => {
-  fetchAllRecords.value({ page: currentPage.value }).then(() => {
+  fetchAllRecords.value({ page: currentPage.value, sortBy: sortBy.value, sortDesc: sortDesc.value }).then(() => {
     console.log('Initial records:', records.value);
   });
 });

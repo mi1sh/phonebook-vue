@@ -30,9 +30,7 @@ export const useRecordsStore = defineStore('records', () => {
 			const params = {
 				page: filters.page || 1,
 				per_page: itemsPerPage.value,
-				sort_by: filters.sortBy,
-				sort_desc: filters.sortDesc ? 'desc' : 'asc',
-				...filters,
+				sort: filters.sortBy ? `${filters.sortDesc ? '-' : ''}${filters.sortBy}` : undefined,
 			};
 
 			const response = await axios.get('https://phonebook.ddirection.kz/records', {
