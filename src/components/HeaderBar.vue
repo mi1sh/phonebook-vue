@@ -21,7 +21,10 @@ const handleLogout = () => {
         PhoneBook
       </h1>
       <v-btn variant="outlined" @click="handleLogout">
-        Log out
+        Выход
+        <template v-slot:append>
+          <v-icon icon="mdi-exit-run"></v-icon>
+        </template>
       </v-btn>
     </v-container>
   </section>

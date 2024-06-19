@@ -57,5 +57,53 @@ export const useRecordsStore = defineStore('records', () => {
 		}
 	};
 
-	return { records, loading, error, fetchAllRecords, itemsPerPage, allFilters, totalPages, totalRecords };
+	const createRecord = async (record) => {
+		const authStore = useAuthStore();
+
+		try {
+			await axios.post('https://phonebook.ddirection.kz/records', record, {
+				headers: {
+					Authorization: `Bearer ${authStore.token}`,
+				},
+			});
+			fetchAllRecords(allFilters.value); // Update the table after creation
+		} catch (err: any) {
+			error.value = err.message;
+			console.error('Create record error:', err);
+		}
+	};
+
+	const updateRecord = async (record) => {
+		const authStore = useAuthStore();
+
+		try {
+			await axios.put(`https://phonebook.ddirection.kz/records/${record.id}`, record, {
+				headers: {
+					Authorization: `Bearer ${authStore.token}`,
+				},
+			});
+			fetchAllRecords(allFilters.value); // Update the table after update
+		} catch (err: any) {
+			error.value = err.message;
+			console.error('Update record error:', err);
+		}
+	};
+
+	const deleteRecord = async (id) => {
+		const authStore = useAuthStore();
+
+		try {
+			await axios.delete(`https://phonebook.ddirection.kz/records/${id}`, {
+				headers: {
+					Authorization: `Bearer ${authStore.token}`,
+				},
+			});
+			fetchAllRecords(allFilters.value); // Update the table after deletion
+		} catch (err: any) {
+			error.value = err.message;
+			console.error('Delete record error:', err);
+		}
+	};
+
+	return { records, loading, error, fetchAllRecords, createRecord, updateRecord, deleteRecord, itemsPerPage, allFilters, totalPages, totalRecords };
 });

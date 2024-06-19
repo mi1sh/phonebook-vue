@@ -60,7 +60,7 @@ const submit = handleSubmit(handleLogin);
           variant="outlined"
           type="submit"
       >
-        Log in
+        Войти
       </v-btn>
       <h1 v-if="loading">Loading...</h1>
     </form>

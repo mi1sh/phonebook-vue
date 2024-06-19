@@ -72,7 +72,7 @@ export const useAuthStore = defineStore('auth', () => {
 
 	const setRefreshTokenInterval = () => {
 		clearRefreshTokenInterval();
-		refreshTokenInterval.value = window.setInterval(refreshToken, 10 * 60 * 1000);
+		refreshTokenInterval.value = window.setInterval(refreshToken, 5 * 60 * 1000);
 	};
 
 	const clearRefreshTokenInterval = () => {
