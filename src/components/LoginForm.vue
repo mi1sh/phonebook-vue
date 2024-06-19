@@ -47,6 +47,7 @@ const submit = handleSubmit(handleLogin);
       <v-text-field
           variant="outlined"
           class="mb-3"
+          base-color="blue-grey-lighten-3"
           color="blue-grey-lighten-4"
           placeholder="qwe123"
           v-model="password.value.value"

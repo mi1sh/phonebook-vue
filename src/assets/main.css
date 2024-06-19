@@ -18,6 +18,11 @@ input {
     border-radius: 5px !important;
 }
 
+.v-data-table-footer__items-per-page {
+    display: none;
+    visibility: hidden;
+}
+
 .v-data-table-header__content {
     font-size: 1.15em;
     color: aliceblue;

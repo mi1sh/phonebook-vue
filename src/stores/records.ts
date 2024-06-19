@@ -12,7 +12,7 @@ export const useRecordsStore = defineStore('records', () => {
 	const itemsPerPage = ref(10);
 	const allFilters = ref({});
 
-	const fetchAllRecords = async (filters = { page: 1, sortBy: '', sortDesc: false }) => {
+	const fetchAllRecords = async (filters = {}) => {
 		loading.value = true;
 		error.value = null;
 		allFilters.value = filters;
@@ -31,6 +31,7 @@ export const useRecordsStore = defineStore('records', () => {
 				page: filters.page || 1,
 				per_page: itemsPerPage.value,
 				sort: filters.sortBy ? `${filters.sortDesc ? '-' : ''}${filters.sortBy}` : undefined,
+				...filters
 			};
 
 			const response = await axios.get('https://phonebook.ddirection.kz/records', {
