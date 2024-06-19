@@ -3,6 +3,10 @@
 Built with <b>Vue</b>, <b>Vuetify</b> and <b>Pinia</b>
 </div>
 
+## How to login?
+
+Use email and password from placeholders
+
 ## Project Setup
 
 ```sh
