@@ -11,6 +11,7 @@ export const useRecordsStore = defineStore('records', () => {
 	const error = ref<string | null>(null);
 	const itemsPerPage = ref(10);
 	const allFilters = ref({});
+	const isAlert = ref(false);
 
 	const fetchAllRecords = async (filters = {}) => {
 		loading.value = true;
@@ -26,7 +27,6 @@ export const useRecordsStore = defineStore('records', () => {
 		}
 
 		try {
-			console.log('Fetching records with filters:', filters);
 			const params = {
 				page: filters.page || 1,
 				per_page: itemsPerPage.value,
@@ -41,14 +41,10 @@ export const useRecordsStore = defineStore('records', () => {
 				params,
 			});
 
-			console.log('Response:', response.data);
-
 			totalRecords.value = response.data._meta.totalCount;
 			totalPages.value = Math.ceil(response.data._meta.totalCount / itemsPerPage.value);
 			records.value = response.data.items;
 			itemsPerPage.value = response.data._meta.pageSize;
-
-			console.log('Updated records:', records.value);
 		} catch (err: any) {
 			error.value = err.message;
 			console.error('Fetch records error:', err);
@@ -66,10 +62,13 @@ export const useRecordsStore = defineStore('records', () => {
 					Authorization: `Bearer ${authStore.token}`,
 				},
 			});
-			fetchAllRecords(allFilters.value); // Update the table after creation
+			fetchAllRecords(allFilters.value);
 		} catch (err: any) {
 			error.value = err.message;
 			console.error('Create record error:', err);
+		} finally {
+			isAlert.value = true;
+			hideAlert();
 		}
 	};
 
@@ -82,10 +81,13 @@ export const useRecordsStore = defineStore('records', () => {
 					Authorization: `Bearer ${authStore.token}`,
 				},
 			});
-			fetchAllRecords(allFilters.value); // Update the table after update
+			fetchAllRecords(allFilters.value);
 		} catch (err: any) {
 			error.value = err.message;
 			console.error('Update record error:', err);
+		} finally {
+			isAlert.value = true;
+			hideAlert();
 		}
 	};
 
@@ -98,12 +100,20 @@ export const useRecordsStore = defineStore('records', () => {
 					Authorization: `Bearer ${authStore.token}`,
 				},
 			});
-			fetchAllRecords(allFilters.value); // Update the table after deletion
+			fetchAllRecords(allFilters.value);
 		} catch (err: any) {
 			error.value = err.message;
 			console.error('Delete record error:', err);
+		} finally {
+			isAlert.value = true;
+			hideAlert();
 		}
 	};
 
-	return { records, loading, error, fetchAllRecords, createRecord, updateRecord, deleteRecord, itemsPerPage, allFilters, totalPages, totalRecords };
+	const hideAlert = () => {
+		window.setTimeout(() => isAlert.value = false, 2500)
+	};
+
+	return { records, loading, error, fetchAllRecords, createRecord, updateRecord, deleteRecord, itemsPerPage, allFilters, totalPages, totalRecords, isAlert };
 });
+

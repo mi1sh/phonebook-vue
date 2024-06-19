@@ -22,7 +22,6 @@ export const useAuthStore = defineStore('auth', () => {
 
 				const recordsStore = useRecordsStore();
 				await recordsStore.fetchAllRecords();
-				console.log('access_token:', token.value);
 			} else {
 				throw new Error('Token not received');
 			}
@@ -53,7 +52,6 @@ export const useAuthStore = defineStore('auth', () => {
 					'Authorization': `Bearer ${token.value}`
 				}
 			});
-			console.log('Refresh token response data:', response.data);
 			if (response.data.access_token) {
 				token.value = response.data.access_token;
 				axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`;

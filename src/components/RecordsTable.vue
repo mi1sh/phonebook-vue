@@ -106,10 +106,6 @@ watch([currentPage, sortBy, sortDesc], fetchAllRecordsWithParams);
 onMounted(() => {
   fetchAllRecordsWithParams();
 });
-
-watch(records, (newRecords) => {
-  console.log('Records changed:', newRecords);
-});
 </script>
 
 <template>
