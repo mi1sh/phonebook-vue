@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import {useRecordsStore} from '@/stores/records';
-import {ref, watch, onMounted, toRefs} from 'vue';
+import { useRecordsStore } from '@/stores/records';
+import { ref, watch, onMounted, toRefs } from 'vue';
+import type {EditedItem, UpdateOptions} from '@/types';
 
 const store = useRecordsStore();
-const {records, itemsPerPage, fetchAllRecords, deleteRecord, loading, totalRecords} = toRefs(store);
+const { records, itemsPerPage, fetchAllRecords, deleteRecord, loading, totalRecords } = toRefs(store);
+
 const currentPage = ref(1);
 const sortBy = ref<string | null>(null);
 const sortDesc = ref<boolean>(false);
+
 const filters = ref({
   f: '',
   i: '',
@@ -16,7 +19,8 @@ const filters = ref({
   birthday: '',
   phone: ''
 });
-const editedItem = ref({
+
+const editedItem = ref<EditedItem>({
   f: '',
   i: '',
   o: '',
@@ -25,24 +29,25 @@ const editedItem = ref({
   birthday: '',
   phone: ''
 });
+
 const isDialogOpen = ref(false);
 const valid = ref(false);
 const dialogTitle = ref('Добавить запись');
 
 const headers = [
-  {title: 'Фамилия', value: 'f', sortable: true},
-  {title: 'Имя', value: 'i', sortable: true},
-  {title: 'Отчество', value: 'o', sortable: true},
-  {title: 'Город', value: 'city', sortable: true},
-  {title: 'Адрес', value: 'address', sortable: true},
-  {title: 'Дата рождения', value: 'birthday', sortable: true},
-  {title: 'Телефон', value: 'phone', sortable: true},
-  {title: '', value: 'actions', sortable: false}
+  { title: 'Фамилия', value: 'f', sortable: true },
+  { title: 'Имя', value: 'i', sortable: true },
+  { title: 'Отчество', value: 'o', sortable: true },
+  { title: 'Город', value: 'city', sortable: true },
+  { title: 'Адрес', value: 'address', sortable: true },
+  { title: 'Дата рождения', value: 'birthday', sortable: true },
+  { title: 'Телефон', value: 'phone', sortable: true },
+  { title: '', value: 'actions', sortable: false }
 ];
 
-function openDialog(item) {
+function openDialog(item: EditedItem | null) {
   if (item) {
-    editedItem.value = {...item};
+    editedItem.value = { ...item };
     dialogTitle.value = 'Изменить запись';
   } else {
     editedItem.value = {
@@ -52,7 +57,8 @@ function openDialog(item) {
       city: '',
       address: '',
       birthday: '',
-      phone: ''
+      phone: '',
+      id: undefined
     };
     dialogTitle.value = 'Добавить запись';
   }
@@ -75,7 +81,7 @@ function saveRecord() {
   }
 }
 
-function updateOptions(options) {
+function updateOptions(options: UpdateOptions) {
   currentPage.value = options.page;
   if (options.sortBy.length) {
     sortBy.value = options.sortBy[0].key;
@@ -98,7 +104,8 @@ function fetchAllRecordsWithParams() {
     sortBy: sortBy.value,
     sortDesc: sortDesc.value
   };
-  fetchAllRecords.value(filterParams);
+
+  fetchAllRecords.value(filterParams as any);
 }
 
 watch([currentPage, sortBy, sortDesc], fetchAllRecordsWithParams);
@@ -123,8 +130,7 @@ onMounted(() => {
     >
       <template #top>
         <v-container>
-          <v-btn prepend-icon="mdi-plus" class="float-left" variant="outlined" @click="openDialog(null)">Добавить
-          </v-btn>
+          <v-btn prepend-icon="mdi-plus" class="float-left" variant="outlined" @click="openDialog(null)">Добавить</v-btn>
         </v-container>
         <v-row>
           <v-col>
@@ -207,8 +213,8 @@ onMounted(() => {
         </v-row>
       </template>
       <template #item.actions="{ item }">
-        <v-icon icon="mdi-pencil" @click="openDialog(item)"></v-icon>
-        <v-icon icon="mdi-delete" color="red" @click="deleteRecord(item.id)"></v-icon>
+        <v-icon icon="mdi-pencil" @click="openDialog(item as EditedItem)"></v-icon>
+        <v-icon icon="mdi-delete" color="red" @click="item.id !== undefined && deleteRecord(item.id)"></v-icon>
       </template>
     </v-data-table-server>
     <v-dialog v-model="isDialogOpen" max-width="500px">
@@ -218,8 +224,7 @@ onMounted(() => {
         </v-card-title>
         <v-card-text>
           <v-form ref="form" v-model="valid">
-            <v-text-field variant="outlined" v-model="editedItem.f" :rules="[v => !!v || 'Фамилия обязательна']"
-                          label="Фамилия"></v-text-field>
+            <v-text-field variant="outlined" v-model="editedItem.f" :rules="[v => !!v || 'Фамилия обязательна']" label="Фамилия"></v-text-field>
             <v-text-field variant="outlined" v-model="editedItem.i" label="Имя"></v-text-field>
             <v-text-field variant="outlined" v-model="editedItem.o" label="Отчество"></v-text-field>
             <v-text-field variant="outlined" v-model="editedItem.city" label="Город"></v-text-field>
@@ -230,8 +235,8 @@ onMounted(() => {
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn variant="outlined" color="blue darken-1" text @click="closeDialog">Отмена</v-btn>
-          <v-btn variant="outlined" color="blue darken-1" text @click="saveRecord">Сохранить</v-btn>
+          <v-btn variant="outlined" color="blue darken-1" @click="closeDialog">Отмена</v-btn>
+          <v-btn variant="outlined" color="blue darken-1" @click="saveRecord">Сохранить</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -239,5 +244,8 @@ onMounted(() => {
 </template>
 
 <style scoped>
-
+form {
+  text-align: center;
+  width: 25em;
+}
 </style>

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { useField, useForm } from 'vee-validate';
+import { useField, useForm, type SubmissionHandler } from 'vee-validate';
 import * as yup from 'yup';
 import { useAuthStore } from '@/stores/auth';
 import PhonebookIcon from '@/components/icons/PhonebookIcon.vue';
+import type {LoginFormValues} from '@/types';
 
 const authStore = useAuthStore();
 const { loading } = authStore;
@@ -12,14 +13,14 @@ const validationSchema = yup.object({
   password: yup.string().min(6, 'Password needs to be at least 6 characters.').required('Password is required.')
 });
 
-const { handleSubmit } = useForm({
+const { handleSubmit } = useForm<LoginFormValues>({
   validationSchema,
 });
 
-const email = useField('email');
-const password = useField('password');
+const { value: email, errorMessage: emailError } = useField<LoginFormValues['email']>('email');
+const { value: password, errorMessage: passwordError } = useField<LoginFormValues['password']>('password');
 
-const handleLogin = async (values: { email: string, password: string }) => {
+const handleLogin: SubmissionHandler<LoginFormValues> = async (values) => {
   try {
     await authStore.login(values.email, values.password);
   } catch (error) {
@@ -40,8 +41,8 @@ const submit = handleSubmit(handleLogin);
           base-color="blue-grey-lighten-3"
           color="blue-grey-lighten-4"
           placeholder="mail@example.com"
-          v-model="email.value.value"
-          :error-messages="email.errorMessage"
+          v-model="email"
+          :error-messages="emailError"
           label="E-mail"
       ></v-text-field>
       <v-text-field
@@ -50,8 +51,8 @@ const submit = handleSubmit(handleLogin);
           base-color="blue-grey-lighten-3"
           color="blue-grey-lighten-4"
           placeholder="qwe123"
-          v-model="password.value.value"
-          :error-messages="password.errorMessage"
+          v-model="password"
+          :error-messages="passwordError"
           label="Password"
           type="password"
       ></v-text-field>

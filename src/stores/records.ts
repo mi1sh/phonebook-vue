@@ -1,19 +1,37 @@
-import { ref } from 'vue';
+import {type Ref, ref} from 'vue';
 import { defineStore } from 'pinia';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useAuthStore } from './auth';
 
-export const useRecordsStore = defineStore('records', () => {
-	const records = ref<any[]>([]);
-	const loading = ref(false);
-	const totalPages = ref(0);
-	const totalRecords = ref(0);
-	const error = ref<string | null>(null);
-	const itemsPerPage = ref(10);
-	const allFilters = ref({});
-	const isAlert = ref(false);
+interface Filters {
+	page?: number;
+	per_page?: number;
+	sortBy?: string;
+	sortDesc?: boolean;
+	[key: string]: any;
+}
 
-	const fetchAllRecords = async (filters = {}) => {
+interface Meta {
+	totalCount: number;
+	pageSize: number;
+}
+
+interface Record {
+	id?: number;
+	[key: string]: any;
+}
+
+export const useRecordsStore = defineStore('records', () => {
+	const records: Ref<Record[]> = ref([]);
+	const loading: Ref<boolean> = ref(false);
+	const totalPages: Ref<number> = ref(0);
+	const totalRecords: Ref<number> = ref(0);
+	const error: Ref<string | null> = ref(null);
+	const itemsPerPage: Ref<number> = ref(10);
+	const allFilters: Ref<Filters> = ref({});
+	const isAlert: Ref<boolean> = ref(false);
+
+	const fetchAllRecords = async (filters: Filters = {}) => {
 		loading.value = true;
 		error.value = null;
 		allFilters.value = filters;
@@ -22,7 +40,7 @@ export const useRecordsStore = defineStore('records', () => {
 		if (!authStore.token) {
 			error.value = 'Token is not available';
 			loading.value = false;
-			console.error(error);
+			console.error(error.value);
 			return;
 		}
 
@@ -34,7 +52,7 @@ export const useRecordsStore = defineStore('records', () => {
 				...filters
 			};
 
-			const response = await axios.get('https://phonebook.ddirection.kz/records', {
+			const response = await axios.get<{ _meta: Meta; items: Record[] }>('https://phonebook.ddirection.kz/records', {
 				headers: {
 					Authorization: `Bearer ${authStore.token}`,
 				},
@@ -46,14 +64,15 @@ export const useRecordsStore = defineStore('records', () => {
 			records.value = response.data.items;
 			itemsPerPage.value = response.data._meta.pageSize;
 		} catch (err: any) {
-			error.value = err.message;
-			console.error('Fetch records error:', err);
+			const axiosError = err as AxiosError;
+			error.value = axiosError.message;
+			console.error('Fetch records error:', axiosError);
 		} finally {
 			loading.value = false;
 		}
 	};
 
-	const createRecord = async (record) => {
+	const createRecord = async (record: Record) => {
 		const authStore = useAuthStore();
 
 		try {
@@ -64,15 +83,16 @@ export const useRecordsStore = defineStore('records', () => {
 			});
 			fetchAllRecords(allFilters.value);
 		} catch (err: any) {
-			error.value = err.message;
-			console.error('Create record error:', err);
+			const axiosError = err as AxiosError;
+			error.value = axiosError.message;
+			console.error('Create record error:', axiosError);
 		} finally {
 			isAlert.value = true;
 			hideAlert();
 		}
 	};
 
-	const updateRecord = async (record) => {
+	const updateRecord = async (record: Record) => {
 		const authStore = useAuthStore();
 
 		try {
@@ -83,15 +103,16 @@ export const useRecordsStore = defineStore('records', () => {
 			});
 			fetchAllRecords(allFilters.value);
 		} catch (err: any) {
-			error.value = err.message;
-			console.error('Update record error:', err);
+			const axiosError = err as AxiosError;
+			error.value = axiosError.message;
+			console.error('Update record error:', axiosError);
 		} finally {
 			isAlert.value = true;
 			hideAlert();
 		}
 	};
 
-	const deleteRecord = async (id) => {
+	const deleteRecord = async (id: number) => {
 		const authStore = useAuthStore();
 
 		try {
@@ -102,8 +123,9 @@ export const useRecordsStore = defineStore('records', () => {
 			});
 			fetchAllRecords(allFilters.value);
 		} catch (err: any) {
-			error.value = err.message;
-			console.error('Delete record error:', err);
+			const axiosError = err as AxiosError;
+			error.value = axiosError.message;
+			console.error('Delete record error:', axiosError);
 		} finally {
 			isAlert.value = true;
 			hideAlert();
@@ -111,9 +133,8 @@ export const useRecordsStore = defineStore('records', () => {
 	};
 
 	const hideAlert = () => {
-		window.setTimeout(() => isAlert.value = false, 2500)
+		window.setTimeout(() => isAlert.value = false, 2500);
 	};
 
 	return { records, loading, error, fetchAllRecords, createRecord, updateRecord, deleteRecord, itemsPerPage, allFilters, totalPages, totalRecords, isAlert };
 });
-
